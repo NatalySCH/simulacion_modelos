@@ -10,35 +10,19 @@
 <body>
 
 <header>
-  <div>
-    <h1>SUSPENSION DIGITAL TWIN</h1>
-    <div class="sub">SISTEMA DE MONITOREO · MODELO MASA-RESORTE-AMORTIGUADOR · m·x'' + b·x' + k·x = F(t)</div>
-  </div>
-  <div class="status-pill" id="statusPill">● SISTEMA ACTIVO</div>
+  <h1>SIMULACIÓN DE SUSPENSIÓN AUTOMOTRIZ</h1>
+  <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </header>
-
+<main>
 <div class="layout">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
 
-    <div>
-      <div class="s-title">Modo de Amortiguamiento</div>
-      <div class="mode-btns">
-        <button class="mode-btn active-sub" id="btn-sub" onclick="setMode('sub')">
-          SUBAMORTIGUADO
-          <span class="mode-badge">ζ &lt; 1 · oscilaciones libres</span>
-        </button>
-        <button class="mode-btn" id="btn-crit" onclick="setMode('crit')">
-          CRÍTICAMENTE AMORT.
-          <span class="mode-badge">ζ = 1 · retorno óptimo</span>
-        </button>
-        <button class="mode-btn" id="btn-sobre" onclick="setMode('sobre')">
-          SOBREAMORTIGUADO
-          <span class="mode-badge">ζ &gt; 1 · retorno lento</span>
-        </button>
-      </div>
-    </div>
 
     <div>
       <div class="s-title">Parámetros del Sistema</div>
@@ -83,34 +67,59 @@
       </div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <button class="spawn-btn" onclick="spawnManualBump()">⚡ FORZAR BACHE</button>
-      <button class="export-btn" onclick="exportJSON()">💾 EXPORTAR PICOS JSON</button>
-      <button class="reset-btn" onclick="resetPhysics()">↺ RESET SISTEMA</button>
-    </div>
 
   </aside>
 
   <!-- MAIN -->
   <div class="main-area">
     <canvas id="simCanvas"></canvas>
-    <div class="graph-area">
-      <div class="graph-header">
-        <div class="graph-title">Respuesta del sistema — Desplazamiento x(t)</div>
-        <div class="graph-legend">
-          <span><span class="leg-dot" style="background:#00d4ff"></span>posición x(t)</span>
-          <span><span class="leg-dot" style="background:#ff3355"></span>umbral</span>
-          <span><span class="leg-dot" style="background:#ffd600;border-radius:0;width:12px;height:2px;display:inline-block;vertical-align:middle"></span>equilibrio</span>
+    <div class="bottom-panel">
+      <div class="graph-area">
+        <div class="graph-header">
+          <div class="graph-title">Respuesta del sistema — Desplazamiento x(t)</div>
+          <div class="graph-legend">
+            <span><span class="leg-dot" style="background:#00d4ff"></span>posición x(t)</span>
+            <span><span class="leg-dot" style="background:#ff3355"></span>umbral</span>
+            <span><span class="leg-dot" style="background:#ffd600;border-radius:0;width:12px;height:2px;display:inline-block;vertical-align:middle"></span>equilibrio</span>
+          </div>
+        </div>
+        <canvas id="graphCanvas"></canvas>
+      </div>
+      
+      <div class="bottom-controls">
+        <div class="bc-top">
+          <div class="s-title">Modo de Amortiguamiento</div>
+          <div class="mode-btns horiz">
+            <button class="mode-btn active-sub" id="btn-sub" onclick="setMode('sub')">
+              SUBAMORT.
+              <span class="mode-badge">ζ &lt; 1 · oscilaciones libres</span>
+            </button>
+            <button class="mode-btn" id="btn-crit" onclick="setMode('crit')">
+              CRÍTICO
+              <span class="mode-badge">ζ = 1 · retorno óptimo</span>
+            </button>
+            <button class="mode-btn" id="btn-sobre" onclick="setMode('sobre')">
+              SOBREAMORT.
+              <span class="mode-badge">ζ &gt; 1 · retorno lento</span>
+            </button>
+          </div>
+        </div>
+        <div class="bc-bottom">
+          <div class="a-title">Acciones</div>
+          <div class="action-btns">
+            <button class="spawn-btn" onclick="spawnManualBump()">⚡ BACHE</button>
+            <button class="export-btn" onclick="exportJSON()">💾 EXPORTAR</button>
+            <button class="reset-btn" onclick="resetPhysics()">↺ RESET</button>
+          </div>
         </div>
       </div>
-      <canvas id="graphCanvas"></canvas>
     </div>
   </div>
 
 </div>
 
 <div id="toast">✓ Picos exportados a suspension_picos.json</div>
-
+</main>
 <script src="script.js"></script>
 </body>
 </html>

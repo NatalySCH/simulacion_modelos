@@ -661,3 +661,14 @@ document.getElementById('sth').addEventListener('input',e=>{
 
 spawnBump();
 requestAnimationFrame(loop);
+
+// ── Hamburger Menu Toggle ──
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-closed');
+  // Resize canvas smoothly during and after transition
+  let start = performance.now();
+  requestAnimationFrame(function animateResize(time) {
+    resizeCanvases();
+    if (time - start < 350) requestAnimationFrame(animateResize);
+  });
+}
