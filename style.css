@@ -364,14 +364,24 @@
   .hamburger-btn:hover span {
     background: var(--accent2);
   }
-  body.sidebar-closed .hamburger-btn span:nth-child(1) {
+  .hamburger-btn span:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
   }
-  body.sidebar-closed .hamburger-btn span:nth-child(2) {
+  .hamburger-btn span:nth-child(2) {
     opacity: 0;
   }
-  body.sidebar-closed .hamburger-btn span:nth-child(3) {
+  .hamburger-btn span:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg);
+  }
+
+  body.sidebar-closed .hamburger-btn span:nth-child(1) {
+    transform: none;
+  }
+  body.sidebar-closed .hamburger-btn span:nth-child(2) {
+    opacity: 1;
+  }
+  body.sidebar-closed .hamburger-btn span:nth-child(3) {
+    transform: none;
   }
 
   /* ── Alert Notification ── */
