@@ -627,14 +627,31 @@ function loop(ts){
 }
 
 // ── Sliders ──
+function autoUpdateMode() {
+  const wn = Math.sqrt(k/m);
+  const zeta = b/(2*wn*m);
+  let md = 'crit';
+  if(zeta < 0.95) md = 'sub';
+  else if(zeta > 1.05) md = 'sobre';
+  
+  currentMode = md;
+  ['sub','crit','sobre'].forEach(id => {
+    document.getElementById('btn-'+id).className =
+      'mode-btn' + (id===md ? ' '+MODES[id].zClass : '');
+  });
+}
+
 document.getElementById('sm').addEventListener('input',e=>{
   m=+e.target.value; document.getElementById('lm').textContent=m.toFixed(1);
+  autoUpdateMode();
 });
 document.getElementById('sb').addEventListener('input',e=>{
   b=+e.target.value; document.getElementById('lb').textContent=b.toFixed(1);
+  autoUpdateMode();
 });
 document.getElementById('sk').addEventListener('input',e=>{
   k=+e.target.value; document.getElementById('lk').textContent=k.toFixed(1);
+  autoUpdateMode();
 });
 document.getElementById('sth').addEventListener('input',e=>{
   alertThreshold=+e.target.value;
