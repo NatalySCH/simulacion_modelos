@@ -383,7 +383,7 @@ function drawWheel(wx,wy){
   ctx.restore();
 }
 
-// ── Auto ──
+// ── Auto Deportivo ──
 function drawCar(carX,chassisY,roadY){
   const w1x=carX-52, w2x=carX+52, wy=roadY;
 
@@ -398,60 +398,103 @@ function drawCar(carX,chassisY,roadY){
     drawSpring(wx+5,top,bot);
   });
 
-  ctx.fillStyle='#600000'; ctx.fillRect(carX-60,chassisY+28,120,8);
+  ctx.beginPath(); ctx.ellipse(carX,wy+6,75,6,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,.4)'; ctx.fill();
 
-  ctx.beginPath(); ctx.ellipse(carX,wy+6,68,5,0,0,Math.PI*2);
-  ctx.fillStyle='rgba(0,0,0,.35)'; ctx.fill();
+  ctx.fillStyle='#111'; ctx.fillRect(carX-65,chassisY+26,130,8);
+
+  const carColor = '#00e5ff';
+  
+  ctx.beginPath();
+  ctx.moveTo(carX-85, chassisY+26);
+  ctx.lineTo(carX+85, chassisY+26);
+  ctx.lineTo(carX+88, chassisY+15);
+  ctx.lineTo(carX+65, chassisY);
+  ctx.lineTo(carX+25, chassisY-6);
+  ctx.lineTo(carX-10, chassisY-24);
+  ctx.lineTo(carX-40, chassisY-24);
+  ctx.lineTo(carX-75, chassisY);
+  ctx.lineTo(carX-88, chassisY+8);
+  ctx.closePath();
+  ctx.fillStyle = carColor; ctx.fill();
+  ctx.strokeStyle = '#008b99'; ctx.lineWidth = 1.5; ctx.stroke();
 
   ctx.beginPath();
-  if(ctx.roundRect) ctx.roundRect(carX-72,chassisY,144,40,[6,6,4,4]);
-  else ctx.rect(carX-72,chassisY,144,40);
-  ctx.fillStyle='#cc2222'; ctx.fill();
-  ctx.strokeStyle='#881111'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.moveTo(carX-86, chassisY+12);
+  ctx.lineTo(carX+80, chassisY+12);
+  ctx.lineTo(carX+75, chassisY+16);
+  ctx.lineTo(carX-84, chassisY+16);
+  ctx.fillStyle = '#fff'; ctx.fill();
+  
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.moveTo(carX-20, chassisY+18);
+  ctx.lineTo(carX, chassisY+18);
+  ctx.lineTo(carX-5, chassisY+24);
+  ctx.lineTo(carX-25, chassisY+24);
+  ctx.fill();
 
   ctx.beginPath();
-  if(ctx.roundRect) ctx.roundRect(carX-70,chassisY+1,140,8,[5,5,0,0]);
-  else ctx.rect(carX-70,chassisY+1,140,8);
-  ctx.fillStyle='rgba(255,100,100,.18)'; ctx.fill();
-  ctx.fillStyle='#aa1a1a'; ctx.fillRect(carX-72,chassisY+15,144,4);
-  ctx.strokeStyle='rgba(80,0,0,.5)'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(carX-2,chassisY+2); ctx.lineTo(carX-2,chassisY+38); ctx.stroke();
+  ctx.moveTo(carX+20, chassisY-6);  // base frente
+  ctx.lineTo(carX-8, chassisY-21);  // techo frente
+  ctx.lineTo(carX-35, chassisY-21); // techo atrás
+  ctx.lineTo(carX-65, chassisY-3);  // base atrás
+  ctx.lineTo(carX+20, chassisY-6);
+  ctx.closePath();
+  ctx.fillStyle = '#0a0a0f'; ctx.fill();
+  
+  ctx.strokeStyle = carColor; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(carX-6, chassisY-21); ctx.lineTo(carX-12, chassisY-6); ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(carX-2, chassisY-20);
+  ctx.lineTo(carX+14, chassisY-7);
+  ctx.lineTo(carX+5, chassisY-7);
+  ctx.lineTo(carX-10, chassisY-20);
+  ctx.fillStyle = 'rgba(255,255,255,.15)'; ctx.fill();
 
   ctx.beginPath();
-  ctx.moveTo(carX-50,chassisY); ctx.lineTo(carX-30,chassisY-34);
-  ctx.lineTo(carX+30,chassisY-34); ctx.lineTo(carX+50,chassisY);
-  ctx.closePath(); ctx.fillStyle='#cc2222'; ctx.fill();
-  ctx.strokeStyle='#881111'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.moveTo(carX-70, chassisY);
+  ctx.lineTo(carX-75, chassisY-18);
+  ctx.lineTo(carX-95, chassisY-15);
+  ctx.lineTo(carX-90, chassisY-10);
+  ctx.lineTo(carX-76, chassisY-10);
+  ctx.lineTo(carX-76, chassisY);
+  ctx.fillStyle = '#111'; ctx.fill();
+  ctx.strokeStyle= carColor; ctx.lineWidth=1; ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(carX-40,chassisY-2); ctx.lineTo(carX-24,chassisY-30);
-  ctx.lineTo(carX+24,chassisY-30); ctx.lineTo(carX+40,chassisY-2);
-  ctx.closePath(); ctx.fillStyle='#80b8d8'; ctx.fill();
-  ctx.fillStyle='rgba(0,40,80,.25)'; ctx.fill();
-  ctx.strokeStyle='#661111'; ctx.lineWidth=1; ctx.stroke();
+  ctx.moveTo(carX+70, chassisY+6);
+  ctx.lineTo(carX+86, chassisY+8);
+  ctx.lineTo(carX+82, chassisY+13);
+  ctx.lineTo(carX+65, chassisY+11);
+  ctx.closePath();
+  ctx.fillStyle = '#eeffff'; ctx.fill();
 
-  ctx.beginPath(); ctx.arc(carX+70,chassisY+22,12,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,240,150,.12)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(carX+70,chassisY+22,8,0,Math.PI*2);
-  ctx.fillStyle='#fff5b0'; ctx.fill();
-  ctx.beginPath(); ctx.arc(carX+70,chassisY+22,5,0,Math.PI*2);
-  ctx.fillStyle='#ffffff'; ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(carX+76,chassisY+22); ctx.lineTo(carX+200,chassisY+35); ctx.lineTo(carX+200,chassisY+10);
-  ctx.closePath(); ctx.fillStyle='rgba(255,248,150,.06)'; ctx.fill();
+  ctx.moveTo(carX+84, chassisY+10);
+  ctx.lineTo(carX+220, chassisY+25);
+  ctx.lineTo(carX+220, chassisY-5);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(150,220,255,.15)'; ctx.fill();
+  
+  ctx.beginPath();
+  ctx.moveTo(carX-87, chassisY+8);
+  ctx.lineTo(carX-88, chassisY+11);
+  ctx.lineTo(carX-80, chassisY+11);
+  ctx.lineTo(carX-77, chassisY+8);
+  ctx.closePath();
+  ctx.fillStyle = '#ff0033'; ctx.fill();
+  
+  ctx.beginPath(); ctx.arc(carX-85, chassisY+9, 10, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,0,50,.3)'; ctx.fill();
 
-  ctx.beginPath(); ctx.arc(carX-70,chassisY+22,7,0,Math.PI*2);
-  ctx.fillStyle='#ff0000'; ctx.fill();
-  ctx.beginPath(); ctx.arc(carX-70,chassisY+22,4,0,Math.PI*2);
-  ctx.fillStyle='#ff8080'; ctx.fill();
-
-  // Flash de límite elástico
   if(Math.abs(px) > ELASTIC_LIMIT*.85){
     ctx.save(); ctx.globalAlpha=.3+.3*Math.sin(simTime*20);
     ctx.strokeStyle='#ff3355'; ctx.lineWidth=3;
     ctx.beginPath();
-    if(ctx.roundRect) ctx.roundRect(carX-75,chassisY-38,150,82,6);
-    else ctx.rect(carX-75,chassisY-38,150,82);
+    if(ctx.roundRect) ctx.roundRect(carX-100,chassisY-30,195,65,8);
+    else ctx.rect(carX-100,chassisY-30,195,65);
     ctx.stroke(); ctx.restore();
   }
 
