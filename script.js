@@ -54,14 +54,18 @@ function setMode(md) {
   });
 }
 
+function resetAlerts() {
+  outOfBoundsSince = null;
+  alertFired = false;
+  dismissedAlertLevel = null;
+  lastAboveThreshold = 0;
+  setAlertOk();
+}
+
 function resetPhysics() {
   px=0; pv=0; graphData=[];
   peakLog=[];
-  outOfBoundsSince=null; alertFired=false;
-  setAlertOk();
-  document.getElementById('statusPill').textContent = '● SISTEMA ACTIVO';
-  document.getElementById('statusPill').style.borderColor = '';
-  document.getElementById('statusPill').style.color = '';
+  resetAlerts();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -100,48 +104,74 @@ function recordPeak(t, x) {
   }
 }
 
+let lastAboveThreshold = 0;
+
 function checkAlerts(t) {
   const absX = Math.abs(px);
   recordPeak(t, px);
 
   if (absX > alertThreshold) {
     if (!outOfBoundsSince) outOfBoundsSince = t;
-    const elapsed = t - outOfBoundsSince;
+    lastAboveThreshold = t;
+  }
 
-    if (elapsed >= 3.0 && !alertFired) {
-      alertFired = true;
-      setAlertError();
-      // Imprimir mensaje requerido por el enunciado
-      console.error('ERROR: Amortiguador desgastado. Requiere mantenimiento.');
-    } else if (!alertFired) {
-      setAlertWarn(elapsed);
-    }
-  } else {
-    if (!alertFired) {
+  if (outOfBoundsSince && !alertFired) {
+    const elapsed = t - outOfBoundsSince;
+    const timeSinceLast = t - lastAboveThreshold;
+
+    if (timeSinceLast > 1.5) {
+      // Si se estabiliza por 1.5s debajo del umbral, se resetea
       outOfBoundsSince = null;
+      dismissedAlertLevel = null;
       setAlertOk();
+    } else {
+      if (elapsed >= 3.0) {
+        alertFired = true;
+        setAlertError();
+        console.error('ERROR: Amortiguador desgastado. Requiere mantenimiento.');
+      } else {
+        setAlertWarn(elapsed);
+      }
     }
   }
+}
+
+let dismissedAlertLevel = null;
+
+function dismissAlert() {
+  const notif = document.getElementById('alertNotification');
+  if (notif) notif.classList.remove('show');
+  dismissedAlertLevel = alertFired ? 'error' : 'warn';
 }
 
 function setAlertOk() {
   document.getElementById('alertBox').className = 'alert-box ok';
   document.getElementById('alertText').innerHTML =
     '● SISTEMA NOMINAL<br>Oscilaciones dentro del rango.<br>Tiempo fuera de umbral: 0.0 s';
+  const notif = document.getElementById('alertNotification');
+  if (notif) notif.className = 'alert-notification';
 }
 function setAlertWarn(elapsed) {
   document.getElementById('alertBox').className = 'alert-box warn';
   document.getElementById('alertText').innerHTML =
-    '⚠ ADVERTENCIA<br>Oscilación sostenida: ' + elapsed.toFixed(1) + ' s<br>Monitoreo activo — umbral: ±' + alertThreshold.toFixed(2) + ' m';
+    '⚠ ALERTA ACTIVA<br>Revise las notificaciones para más<br>detalles del evento.';
+  const notif = document.getElementById('alertNotification');
+  if (notif && dismissedAlertLevel !== 'warn' && dismissedAlertLevel !== 'error') {
+    notif.className = 'alert-notification warn show';
+    notif.innerHTML = '⚠ ADVERTENCIA<br>Oscilación sostenida: ' + elapsed.toFixed(1) + ' s<br>Umbral: ±' + alertThreshold.toFixed(2) + ' m' + 
+      '<span class="alert-close" onclick="dismissAlert()">×</span>';
+  }
 }
 function setAlertError() {
   document.getElementById('alertBox').className = 'alert-box error';
   document.getElementById('alertText').innerHTML =
-    '✖ ERROR CRÍTICO<br>Amortiguador desgastado.<br>Requiere mantenimiento.<br><br>t_estab &gt; 3.0 s';
-  document.getElementById('statusPill').textContent = '● FALLA DETECTADA';
-  document.getElementById('statusPill').style.borderColor = '#ff3355';
-  document.getElementById('statusPill').style.color = '#ff3355';
-  document.getElementById('statusPill').style.animation = 'none';
+    '✖ ERROR CRÍTICO<br>El sistema de amortiguación ha fallado.<br>Requiere asistencia.';
+  const notif = document.getElementById('alertNotification');
+  if (notif && dismissedAlertLevel !== 'error') {
+    notif.className = 'alert-notification error show';
+    notif.innerHTML = '✖ ERROR CRÍTICO<br>Amortiguador desgastado.<br>Requiere mantenimiento.<br><br>t_estab &gt; 3.0 s' + 
+      '<span class="alert-close" onclick="dismissAlert()">×</span>';
+  }
 }
 
 // ── Exportar JSON ──
@@ -177,7 +207,7 @@ function exportJSON() {
   const t = document.getElementById('toast');
   t.textContent = '✓ Exportado: ' + peakLog.length + ' picos guardados';
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  setTimeout(() => t.classList.remove('show'), 6000);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -639,6 +669,7 @@ function autoUpdateMode() {
     document.getElementById('btn-'+id).className =
       'mode-btn' + (id===md ? ' '+MODES[id].zClass : '');
   });
+  resetAlerts();
 }
 
 document.getElementById('sm').addEventListener('input',e=>{
@@ -656,7 +687,7 @@ document.getElementById('sk').addEventListener('input',e=>{
 document.getElementById('sth').addEventListener('input',e=>{
   alertThreshold=+e.target.value;
   document.getElementById('lth').textContent=alertThreshold.toFixed(2);
-  if(!alertFired){ outOfBoundsSince=null; setAlertOk(); }
+  resetAlerts();
 });
 
 spawnBump();
