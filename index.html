@@ -3,124 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulación de suspensión automotriz</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<title>SimulSuspension</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <h1>SIMULACIÓN DE SUSPENSIÓN AUTOMOTRIZ</h1>
-  <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+  <div class="brand">
+    <span class="brand-name">SimulSuspensión</span>
+    <span class="brand-tag">digital twin v1.0</span>
+  </div>
 </header>
-<main>
-<div class="layout">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+<div class="app-shell">
 
+  <!-- ── LEFT: Parámetros + Modo ── -->
+  <aside class="panel-left">
 
     <div>
-      <div class="s-title">Parámetros del Sistema</div>
-      <div class="slider-group">
-        <div class="slider-row">
-          <label>Masa (m) <span id="lm">2.0</span> kg</label>
+      <div class="section-title">Parámetros del Sistema</div>
+      <div class="param-block">
+        <div class="param-item">
+          <div class="param-header">
+            <span class="param-label">Masa</span>
+            <span><span class="param-val" id="lm">2.0</span><span class="param-unit">kg</span></span>
+          </div>
           <input type="range" id="sm" min="0.5" max="10" step="0.1" value="2">
         </div>
-        <div class="slider-row">
-          <label>Amortiguador (b) <span id="lb">2.0</span> Ns/m</label>
+        <div class="param-item">
+          <div class="param-header">
+            <span class="param-label">Amortiguador</span>
+            <span><span class="param-val" id="lb">2.0</span><span class="param-unit">Ns/m</span></span>
+          </div>
           <input type="range" id="sb" min="0" max="50" step="0.5" value="2">
         </div>
-        <div class="slider-row">
-          <label>Resorte (k) <span id="lk">5.0</span> N/m</label>
+        <div class="param-item">
+          <div class="param-header">
+            <span class="param-label">Resorte</span>
+            <span><span class="param-val" id="lk">5.0</span><span class="param-unit">N/m</span></span>
+          </div>
           <input type="range" id="sk" min="1" max="100" step="0.5" value="5">
         </div>
-        <div class="slider-row">
-          <label>Umbral alerta <span id="lth">0.30</span> m</label>
+        <div class="param-item">
+          <div class="param-header">
+            <span class="param-label">Umbral de alerta</span>
+            <span><span class="param-val" id="lth">0.30</span><span class="param-unit">m</span></span>
+          </div>
           <input type="range" id="sth" min="0.05" max="1.5" step="0.01" value="0.3">
         </div>
       </div>
     </div>
 
+    <div class="divider"></div>
+
     <div>
-      <div class="s-title">Diagnóstico en Tiempo Real</div>
-      <div class="metrics">
-        <div class="metric"><div class="m-label">ωn rad/s</div><div class="m-val" id="mwn">1.58</div></div>
-        <div class="metric"><div class="m-label">ζ zeta</div><div class="m-val" id="mzeta">0.354</div></div>
-        <div class="metric"><div class="m-label">x (m)</div><div class="m-val" id="mpos">0.000</div></div>
-        <div class="metric"><div class="m-label">v (m/s)</div><div class="m-val" id="mvel">0.000</div></div>
-      </div>
-      <div class="s-title" style="margin-top:10px">ζ relativo</div>
-      <div class="zeta-bar-wrap">
-        <div class="zeta-bar-fill" id="zetaBar" style="width:30%;background:var(--green)"></div>
+      <div class="section-title">Factor de amortiguamiento</div>
+      <div class="zeta-card">
+        <div class="zeta-header">
+          <div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:4px;">ζ (zeta)</div>
+            <div class="zeta-big" id="zetaNum">0.354</div>
+          </div>
+          <span class="zeta-state sub" id="zetaState">SUBAMORT.</span>
+        </div>
+        <div class="zeta-track">
+          <div class="zeta-fill" id="zetaBar" style="width:30%;background:var(--green)"></div>
+        </div>
+        <div class="zeta-labels">
+          <span>0</span>
+          <span>ζ = 1</span>
+          <span>2</span>
+        </div>
       </div>
     </div>
 
+    <div class="divider"></div>
+
     <div>
-      <div class="s-title">Estado del Sistema</div>
-      <div class="alert-box ok" id="alertBox">
-        <div id="alertText">● SISTEMA NOMINAL<br>Oscilaciones dentro del rango operativo.<br>Tiempo fuera de umbral: 0.0 s</div>
+      <div class="section-title">Modo de amortiguamiento</div>
+      <div class="mode-group">
+        <button class="mode-btn active-sub" id="btn-sub" onclick="setMode('sub')">
+          <span class="mode-name">Subamortiguado</span>
+          <span class="mode-zeta">ζ &lt; 1</span>
+        </button>
+        <button class="mode-btn" id="btn-crit" onclick="setMode('crit')">
+          <span class="mode-name">Crítico</span>
+          <span class="mode-zeta">ζ = 1</span>
+        </button>
+        <button class="mode-btn" id="btn-sobre" onclick="setMode('sobre')">
+          <span class="mode-name">Sobreamortiguado</span>
+          <span class="mode-zeta">ζ &gt; 1</span>
+        </button>
       </div>
     </div>
-
 
   </aside>
 
-  <!-- MAIN -->
-  <div class="main-area">
-    <canvas id="simCanvas"></canvas>
-    <div class="bottom-panel">
-      <div class="graph-area">
-        <div class="graph-header">
-          <div class="graph-title">Respuesta del sistema — Desplazamiento x(t)</div>
-          <div class="graph-legend">
-            <span><span class="leg-dot" style="background:#00d4ff"></span>posición x(t)</span>
-            <span><span class="leg-dot" style="background:#ff3355"></span>umbral</span>
-            <span><span class="leg-dot" style="background:#ffd600;border-radius:0;width:12px;height:2px;display:inline-block;vertical-align:middle"></span>equilibrio</span>
-          </div>
-        </div>
-        <canvas id="graphCanvas"></canvas>
+  <!-- ── CENTER: Canvas + Gráfica ── -->
+  <main class="panel-center">
+    <div class="sim-wrap">
+      <canvas id="simCanvas"></canvas>
+
+      <!-- Toolbar flotante -->
+      <div class="sim-toolbar">
+        <button class="tool-btn primary" onclick="spawnManualBump()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 2v8M5 7l3 3 3-3"/>
+            <path d="M2 13h12" stroke-width="1.5"/>
+          </svg>
+          Bache
+        </button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" id="toggleAutoBumps" onclick="toggleAutoBumps()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="3"/>
+            <circle cx="8" cy="8" r="6.5"/>
+          </svg>
+          Automático
+        </button>
+        <button class="tool-btn" onclick="exportJSON()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 2v9M5 8l3 3 3-3"/>
+            <path d="M3 13h10"/>
+          </svg>
+          Exportar
+        </button>
+        <button class="tool-btn" onclick="resetPhysics()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 8a5 5 0 1 0 1.5-3.5"/>
+            <path d="M3 4v4h4"/>
+          </svg>
+          Reset
+        </button>
       </div>
-      
-      <div class="bottom-controls">
-        <div class="bc-top">
-          <div class="s-title">Modo de Amortiguamiento</div>
-          <div class="mode-btns horiz">
-            <button class="mode-btn active-sub" id="btn-sub" onclick="setMode('sub')">
-              SUBAMORTIGUADO
-              <span class="mode-badge">ζ &lt; 1 · oscilaciones libres</span>
-            </button>
-            <button class="mode-btn" id="btn-crit" onclick="setMode('crit')">
-              CRÍTICAMENTE AMORTIGUADO
-              <span class="mode-badge">ζ = 1 · retorno óptimo</span>
-            </button>
-            <button class="mode-btn" id="btn-sobre" onclick="setMode('sobre')">
-              SOBREAMORTIGUADO
-              <span class="mode-badge">ζ &gt; 1 · retorno lento</span>
-            </button>
-          </div>
+    </div>
+
+    <!-- Gráfica -->
+    <div class="graph-strip">
+      <div class="graph-topbar">
+        <span class="graph-label">DESPLAZAMIENTO x(t)</span>
+        <div class="graph-legend">
+          <span><span class="leg-dot" style="background:#1a5fb4"></span>x(t)</span>
+          <span><span class="leg-dash"></span>umbral ±</span>
+          <span style="font-size:9px;color:var(--text3)">equilibrio</span>
         </div>
-        <div class="bc-bottom">
-          <div class="a-title">Acciones</div>
-          <div class="action-btns">
-            <button class="spawn-btn" onclick="spawnManualBump()">⚡ BACHE</button>
-            <button class="export-btn" onclick="exportJSON()">💾 EXPORTAR</button>
-            <button class="reset-btn" onclick="resetPhysics()">↺ RESET</button>
-          </div>
+      </div>
+      <canvas id="graphCanvas"></canvas>
+    </div>
+  </main>
+
+  <!-- ── RIGHT: Diagnóstico ── -->
+  <aside class="panel-right">
+
+    <div>
+      <div class="section-title">Posición actual</div>
+      <div class="big-stat">
+        <div class="big-stat-num" id="bigPos">0.000</div>
+        <div class="big-stat-label">METROS</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="section-title">Métricas en tiempo real</div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="m-label">ωn</div>
+          <div class="m-val" id="mwn">1.58<span class="m-unit">rad/s</span></div>
+        </div>
+        <div class="metric-card">
+          <div class="m-label">ζ</div>
+          <div class="m-val" id="mzeta">0.354</div>
+        </div>
+        <div class="metric-card">
+          <div class="m-label">velocidad</div>
+          <div class="m-val" id="mvel">0.000<span class="m-unit">m/s</span></div>
+        </div>
+        <div class="metric-card">
+          <div class="m-label">umbral</div>
+          <div class="m-val" id="mth2">0.30<span class="m-unit">m</span></div>
         </div>
       </div>
     </div>
-  </div>
 
+    <div class="divider"></div>
+
+    <div>
+      <div class="section-title">Estado del sistema</div>
+      <div class="alert-area">
+        <div class="alert-box ok" id="alertBox">
+          <div id="alertText">● SISTEMA NOMINAL<br>Oscilaciones dentro del rango.<br>Tiempo fuera: 0.0 s</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
 </div>
 
-<div id="toast">✓ Picos exportados a suspension_picos.json</div>
+<div id="toast">✓ Exportado correctamente</div>
 <div id="alertNotification" class="alert-notification"></div>
-</main>
+
 <script src="script.js"></script>
 </body>
 </html>
